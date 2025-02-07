@@ -3,53 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Configuration HID</title>
+    <title>Générateur de Configuration HID - Accessibilité</title>
     <script>
-        function addMapping() {
-            const source = document.getElementById("source").value;
-            const target = document.getElementById("target").value;
-            const sticky = document.getElementById("sticky").checked;
-            const tap = document.getElementById("tap").checked;
-            const hold = document.getElementById("hold").checked;
-            const scaling = document.getElementById("scaling").value;
-
-            const mapping = {
-                "source_usage": source,
-                "target_usage": target,
-                "layers": [0],
-                "sticky": sticky,
-                "tap": tap,
-                "hold": hold,
-                "scaling": parseInt(scaling)
-            };
-
-            let config = JSON.parse(localStorage.getItem("config")) || {"version": 3, "mappings": []};
-            config.mappings.push(mapping);
-            localStorage.setItem("config", JSON.stringify(config, null, 4));
-
+        function generateConfig() {
+            const mobility = document.getElementById("mobility").value;
+            const vision = document.getElementById("vision").value;
+            const dexterity = document.getElementById("dexterity").value;
+            
+            let mappings = [];
+            
+            if (mobility === "faible") {
+                mappings.push({ "source_usage": "0x00070039", "target_usage": "0x000700E0", "layers": [0], "sticky": true });
+            }
+            
+            if (vision === "faible") {
+                mappings.push({ "source_usage": "0x00090004", "target_usage": "0x000700E1", "layers": [0], "tap": true });
+            }
+            
+            if (dexterity === "réduite") {
+                mappings.push({ "source_usage": "0x00090001", "target_usage": "0x00090002", "layers": [0], "hold": true });
+            }
+            
+            let config = {"version": 3, "mappings": mappings};
             document.getElementById("output").textContent = JSON.stringify(config, null, 4);
+            localStorage.setItem("config", JSON.stringify(config));
         }
-
+        
         function downloadConfig() {
             const config = localStorage.getItem("config");
             if (!config) return;
             const blob = new Blob([config], {type: "application/json"});
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "config.json";
+            link.download = "config_accessibilite.json";
             link.click();
         }
     </script>
 </head>
 <body>
-    <h2>Générateur de Configuration HID</h2>
-    <label>Source (Usage ID): <input type="text" id="source" placeholder="ex: 0x00070039"></label><br>
-    <label>Target (Usage ID): <input type="text" id="target" placeholder="ex: 0x000700E0"></label><br>
-    <label>Scaling: <input type="number" id="scaling" value="1000"></label><br>
-    <label><input type="checkbox" id="sticky"> Sticky</label>
-    <label><input type="checkbox" id="tap"> Tap</label>
-    <label><input type="checkbox" id="hold"> Hold</label><br>
-    <button onclick="addMapping()">Ajouter Mapping</button>
+    <h2>Générateur de Configuration HID - Accessibilité</h2>
+    <label>Mobilité: 
+        <select id="mobility">
+            <option value="normale">Normale</option>
+            <option value="faible">Faible</option>
+        </select>
+    </label><br>
+    
+    <label>Vision: 
+        <select id="vision">
+            <option value="normale">Normale</option>
+            <option value="faible">Faible</option>
+        </select>
+    </label><br>
+    
+    <label>Dexterité: 
+        <select id="dexterity">
+            <option value="normale">Normale</option>
+            <option value="réduite">Réduite</option>
+        </select>
+    </label><br>
+    
+    <button onclick="generateConfig()">Générer Config</button>
     <button onclick="downloadConfig()">Télécharger Config</button>
     <pre id="output"></pre>
 </body>
