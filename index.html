@@ -9,6 +9,7 @@
             const mobility = document.getElementById("mobility").value;
             const vision = document.getElementById("vision").value;
             const dexterity = document.getElementById("dexterity").value;
+            const emulation = document.getElementById("emulation").value;
             
             let mappings = [];
             
@@ -22,6 +23,18 @@
             
             if (dexterity === "réduite") {
                 mappings.push({ "source_usage": "0x00090001", "target_usage": "0x00090002", "layers": [0], "hold": true });
+            }
+            
+            if (emulation === "clavier") {
+                mappings.push({ "source_usage": "0x00010030", "target_usage": "0x00070004", "layers": [0], "scaling": 1000 });
+            } else if (emulation === "souris") {
+                mappings.push({ "source_usage": "0x00010030", "target_usage": "0x00010038", "layers": [0], "scaling": 1000 });
+            } else if (emulation === "manette") {
+                mappings.push({ "source_usage": "0x00010030", "target_usage": "0x00030030", "layers": [0], "scaling": 1000 });
+            } else if (emulation === "nintendo_switch") {
+                mappings.push({ "source_usage": "0x00010030", "target_usage": "0x00050030", "layers": [0], "scaling": 1000 });
+            } else if (emulation === "ps4") {
+                mappings.push({ "source_usage": "0x00010030", "target_usage": "0x00060030", "layers": [0], "scaling": 1000 });
             }
             
             let config = {"version": 3, "mappings": mappings};
@@ -60,6 +73,17 @@
         <select id="dexterity">
             <option value="normale">Normale</option>
             <option value="réduite">Réduite</option>
+        </select>
+    </label><br>
+    
+    <label>Type d'émulation: 
+        <select id="emulation">
+            <option value="aucune">Aucune</option>
+            <option value="clavier">Clavier</option>
+            <option value="souris">Souris</option>
+            <option value="manette">Manette</option>
+            <option value="nintendo_switch">Nintendo Switch</option>
+            <option value="ps4">PS4</option>
         </select>
     </label><br>
     
